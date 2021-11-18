@@ -1,9 +1,37 @@
 <template>
-  <div id="map" class="map"></div>
-  <input v-model="this.coordinate.latitude" />
-  <input v-model="this.coordinate.longitude" />
-
-  <button @click="backToCurrentLocation">附近</button>
+  <div id="map" class="map" @click.self="closeSearch">
+    <div class="search">
+      <div class="search-input">
+        <input
+          type="text"
+          placeholder="尋找站點"
+          @focus="openSearch"
+          @keyup.enter="searchStation"
+          @keyup.esc="closeSearch"
+          v-model="this.stationKeyWord"
+        />
+        <SearchStation @click.stop="searchStation" class="search-button" />
+      </div>
+      <div v-if="this.searchResult.length !== 0 && isSearchResultOpen" class="search-result-list">
+        <div
+          class="search-item"
+          @click="chooseStation(item)"
+          v-for="(item, index) in searchResult"
+          :key="index"
+        >
+          {{ item.name }}
+        </div>
+      </div>
+      <div
+        v-else-if="this.searchResult.length === 0 && isSearchResultOpen"
+        class="search-result-list"
+      >
+        <div class="search-item">查無此站，請輸入關鍵字</div>
+      </div>
+    </div>
+    <button class="current-location" @click="backToCurrentLocation"><CurrentLocation /></button>
+  </div>
+  <button @click="openPopup">openPopup</button>
 </template>
 
 <script>
@@ -13,14 +41,17 @@
 import axios from 'axios';
 import jsSHA from 'jssha';
 import L from 'leaflet';
-import { MarkerClusterGroup } from 'leaflet.markercluster/src';
+import CurrentLocation from '../assets/svg/current-location.svg';
+import SearchStation from '../assets/svg/search-station-mobile.svg';
 
 export default {
   name: 'BikeMap',
-
+  components: { CurrentLocation, SearchStation },
   data() {
     return {
-      mapboxToken: process.env.MAP_BOX_TOKEN,
+      stationKeyWord: '',
+      searchResult: [],
+      isSearchResultOpen: false,
       stationSVG:
         '<svg width="36" height="50" viewBox="0 0 36 50" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M0 18.0726C0 8.09194 8.05911 0 17.9993 0C27.9409 0 36 8.09194 36 18.0726C36 26.8625 29.7496 34.1853 21.4692 35.8091L19.1796 42.1448C18.7795 43.2515 17.2205 43.2515 16.8204 42.1448L14.5308 35.8091C6.25038 34.1853 0 26.8625 0 18.0726ZM25.3249 47.8777C25.3249 49.0498 22.0451 50 17.9992 50C13.9534 50 10.6735 49.0498 10.6735 47.8777C10.6735 46.7055 13.9534 45.7553 17.9992 45.7553C22.0451 45.7553 25.3249 46.7055 25.3249 47.8777Z" fill="#FED801"/></svg>',
       iconSVG:
@@ -38,6 +69,69 @@ export default {
     };
   },
   methods: {
+    openPopup() {
+      console.log(this.markers.getLayer());
+      const layerId = this.markers.getLayers().map((item) => item.options.id);
+      console.log(layerId);
+      this.markers.eachLayer((marker) => {
+        if (marker.options.id === 'TPE0003') {
+          marker.openPopup();
+        }
+      });
+      console.log(this.markers.getLayers());
+      console.log(this.markers.getLayers()[0].options.id);
+    },
+    openSearch() {
+      this.map.dragging.disable();
+      this.map.doubleClickZoom.disable();
+      this.map.scrollWheelZoom.disable();
+      this.isSearchResultOpen = true;
+    },
+    closeSearch() {
+      this.isSearchResultOpen = false;
+      this.map.dragging.enable();
+      this.map.doubleClickZoom.enable();
+      this.map.scrollWheelZoom.enable();
+    },
+    async chooseStation(station) {
+      await this.map.setView([station.coordinate.PositionLat, station.coordinate.PositionLon], 17);
+      await this.getNearbyStation(station.coordinate.PositionLat, station.coordinate.PositionLon);
+      this.markers.eachLayer((marker) => {
+        if (marker.options.id === station.stationUID) {
+          marker.openPopup();
+        }
+      });
+      this.closeSearch();
+    },
+    searchStation() {
+      this.map.dragging.disable();
+      this.map.doubleClickZoom.disable();
+      this.map.scrollWheelZoom.disable();
+      if (this.stationKeyWord) {
+        this.searchResult = [];
+        this.cityName.forEach((city) => {
+          axios
+            .get(
+              `https://ptx.transportdata.tw/MOTC/v2/Bike/Station/${city}?$filter=contains(StationName%2FZh_tw%2C%20'${this.stationKeyWord}')&$top=30&$format=JSON`,
+              { headers: this.authorizationHeader },
+            )
+            .then((res) => {
+              const stationNameList = res.data.map((item) => Object.values(item)[3].Zh_tw);
+              const stationInfo = res.data.map((item) => {
+                const info = {};
+                [info.stationUID] = Object.values(item);
+                [, , , , info.coordinate] = Object.values(item);
+                info.name = Object.values(item)[3].Zh_tw;
+                info.city = city;
+                return info;
+              });
+              if (stationNameList.length !== 0) {
+                this.searchResult.push(...stationInfo);
+              }
+            });
+        });
+      }
+    },
     // init map
     setMap(latitude, longitude) {
       this.map = L.map('map', { zoomAnimation: false }).setView([latitude, longitude], 17);
@@ -47,6 +141,7 @@ export default {
           attribution:
             '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
           maxZoom: 19,
+          minZoom: 15,
           id: 'mapbox/streets-v11',
           tileSize: 512,
           zoomOffset: -1,
@@ -90,6 +185,7 @@ export default {
     },
     backToCurrentLocation() {
       this.map.setView([this.coordinate.latitude, this.coordinate.longitude], 17);
+      this.markers.clearLayers();
       this.getNearbyStation(this.coordinate.latitude, this.coordinate.longitude);
       this.dragDistance.startCoord = [this.map.getCenter().lat, this.map.getCenter().lng];
     },
@@ -124,16 +220,10 @@ export default {
         console.log(e);
       }
     },
-    setMarkerCluster() {
-      return new MarkerClusterGroup({
-        iconCreateFunction(cluster) {
-          return L.divIcon({ html: `<b>${cluster.getAllChildMarkers()}</b>` });
-        },
-      });
-    },
+
     setStationMarker(nearbyStation) {
       nearbyStation.forEach((item) => {
-        const coordinate = [item.StationPosition.PositionLat, item.StationPosition.PositionLon];
+        const coord = [item.StationPosition.PositionLat, item.StationPosition.PositionLon];
         const stationIcon = new L.divIcon({
           html: this.stationSVG,
           className: 'station-icon',
@@ -145,27 +235,36 @@ export default {
           iconAnchor: [7, 12],
         });
 
-        const popup = new L.popup({ className: 'station-popup' })
-          .setLatLng(coordinate)
+        const pop = new L.popup({ className: 'station-popup', offset: [0, -8] })
+          .setLatLng(coord)
           .setContent(
             `<p>${item.StationName.Zh_tw}</p><p>可借車輛<span class="popup-number">${item.AvailableRentBikes}</span></p><p>可停空位<span class="popup-number">${item.AvailableReturnBikes}</span></p>`,
           );
 
-        const stationMarker = (icon) => new L.marker(coordinate).setIcon(icon).bindPopup(popup);
-
-        this.markers.addLayer(stationMarker(stationIcon));
-        this.markers.addLayer(stationMarker(iconNum));
-        this.map.addLayer(this.markers);
-        console.log(item);
-        console.log(item.StationName.Zh_tw);
-        console.log('名稱', item.StationName.Zh_tw);
-        console.log('可借車輛', item.AvailableRentBikes);
-        console.log('可停空位', item.AvailableReturnBikes);
+        const marker = (icon) => new L.marker(coord, { id: item.StationUID }).setIcon(icon);
+        this.markers.addLayer(marker(stationIcon).bindPopup(pop).openPopup());
+        this.markers.addLayer(marker(iconNum).bindPopup(pop).openPopup());
+        this.markers.addTo(this.map);
       });
     },
   },
 
   computed: {
+    cityName() {
+      return [
+        'Taipei',
+        'NewTaipei',
+        'Taoyuan',
+        'Hsinchu',
+        'MiaoliCounty',
+        'Taichung',
+        'Chiayi',
+        'Tainan',
+        'Kaohsiung',
+        'PingtungCounty',
+        'KinmenCounty',
+      ];
+    },
     myicon() {
       return new L.divIcon({
         html: this.stationIcon,
@@ -180,7 +279,7 @@ export default {
       //       return L.divIcon({ html: `<b>${cluster.getAllChildMarkers()})</b>` });
       //     },
       //   });
-      return new L.layerGroup();
+      return new L.featureGroup();
     },
 
     authorizationHeader() {
@@ -196,6 +295,14 @@ export default {
     },
   },
   watch: {
+    stationKeyWord(newval) {
+      this.searchResult = [];
+      if (!newval) {
+        this.isSearchResultOpen = false;
+      } else {
+        this.isSearchResultOpen = true;
+      }
+    },
     coordinate: {
       deep: true,
       handler(newval) {
@@ -230,10 +337,69 @@ export default {
 .map {
   width: 100%;
   height: 100%;
+  position: relative;
 }
+.search {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  position: absolute;
+  top: 4.5%;
+  left: 50%;
+  z-index: 500;
+  max-height: calc(80vh - 140px);
 
-.test {
-  color: #000000;
+  transform: translate(-50%, 0%);
+  .search-input {
+    display: flex;
+    input {
+      background: #ffffff;
+      min-width: 50vw;
+      box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.1);
+      border: none;
+      border-radius: 8px;
+      padding-right: 16px;
+      padding-left: 8px;
+      font-size: 16px;
+      line-height: 16px;
+    }
+    .search-button {
+      display: block;
+      cursor: pointer;
+      height: 45px;
+    }
+  }
+  .search-result-list {
+    z-index: 999;
+    margin-top: 5px;
+    background: #ffffff;
+    padding: 5px;
+    box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+    overflow-y: scroll;
+
+    .search-item {
+      background: #ffffff;
+      box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.1);
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 5px;
+      padding: 5px;
+      font-size: 14px;
+      text-align: left;
+      &:hover {
+        background: #fed801;
+      }
+    }
+  }
+}
+.current-location {
+  position: absolute;
+  bottom: 7.5%;
+  right: 16px;
+  background: transparent;
+  transform: translate(0%, 50%);
+  z-index: 500;
 }
 </style>
 <style lang="scss">
