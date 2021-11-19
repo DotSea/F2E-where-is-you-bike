@@ -13,6 +13,7 @@ import BikeMap from '../components/BikeMap.vue';
 
 export default {
   name: 'FindingBike',
+
   components: { TheHeader, TheFooter, BikeMap },
 };
 </script>

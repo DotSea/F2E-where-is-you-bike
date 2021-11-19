@@ -31,7 +31,6 @@
     </div>
     <button class="current-location" @click="backToCurrentLocation"><CurrentLocation /></button>
   </div>
-  <button @click="openPopup">openPopup</button>
 </template>
 
 <script>
@@ -66,21 +65,10 @@ export default {
         longitude: '',
       },
       nearbyStationCoord: [],
+      isSelectRent: true,
     };
   },
   methods: {
-    openPopup() {
-      console.log(this.markers.getLayer());
-      const layerId = this.markers.getLayers().map((item) => item.options.id);
-      console.log(layerId);
-      this.markers.eachLayer((marker) => {
-        if (marker.options.id === 'TPE0003') {
-          marker.openPopup();
-        }
-      });
-      console.log(this.markers.getLayers());
-      console.log(this.markers.getLayers()[0].options.id);
-    },
     openSearch() {
       this.map.dragging.disable();
       this.map.doubleClickZoom.disable();
@@ -226,12 +214,12 @@ export default {
         const coord = [item.StationPosition.PositionLat, item.StationPosition.PositionLon];
         const stationIcon = new L.divIcon({
           html: this.stationSVG,
-          className: 'station-icon',
+          className: `${this.isSelectRent ? 'station-icon' : 'station-icon-parking'}`,
           iconAnchor: [18, 21],
         });
         const iconNum = new L.divIcon({
-          html: `<p>${item.AvailableRentBikes}</p>`,
-          className: 'icon-num',
+          html: `<p>${this.isSelectRent ? item.AvailableRentBikes : item.AvailableReturnBikes}</p>`,
+          className: `${this.isSelectRent ? 'icon-num' : 'icon-num-parking'}`,
           iconAnchor: [7, 12],
         });
 
@@ -265,20 +253,7 @@ export default {
         'KinmenCounty',
       ];
     },
-    myicon() {
-      return new L.divIcon({
-        html: this.stationIcon,
-        className: 'station-icon',
-        iconAnchor: [18, 21],
-      });
-    },
     markers() {
-      //   return new MarkerClusterGroup({
-      //     iconCreateFunction(cluster) {
-      //       console.log(cluster.getAllChildMarkers);
-      //       return L.divIcon({ html: `<b>${cluster.getAllChildMarkers()})</b>` });
-      //     },
-      //   });
       return new L.featureGroup();
     },
 
@@ -329,6 +304,15 @@ export default {
     } catch (e) {
       console.log(e);
     }
+  },
+  mounted() {
+    this.eventBus.on('changeButton', (data) => {
+      this.isSelectRent = data;
+      this.setStationMarker(this.nearbyStationCoord);
+    });
+  },
+  beforeUnmount() {
+    this.eventBus.off('changeButton');
   },
 };
 </script>
@@ -404,7 +388,7 @@ export default {
 </style>
 <style lang="scss">
 .icon-num {
-  font-family: Roboto;
+  font-family: 'Roboto', sans-serif;
   font-size: 15px;
   font-style: italic;
   font-weight: 900;
@@ -412,8 +396,25 @@ export default {
   letter-spacing: 0em;
   text-align: center;
 }
+.icon-num-parking {
+  color: #fed801;
+  font-family: 'Roboto', sans-serif;
+  font-size: 15px;
+  font-style: italic;
+  font-weight: 900;
+  line-height: 18px;
+  letter-spacing: 0em;
+  text-align: center;
+}
+.station-icon-parking {
+  svg {
+    path {
+      fill: #000;
+    }
+  }
+}
 .station-popup {
-  font-family: Noto Sans TC;
+  font-family: 'Noto Sans CJK TC';
   font-size: 13px;
   font-style: normal;
   font-weight: 400;
@@ -423,8 +424,7 @@ export default {
   p {
     margin: 6px 0;
     .popup-number {
-      //styleName: H3_EN;
-      font-family: Roboto;
+      font-family: 'Roboto', sans-serif;
       font-size: 15px;
       font-style: italic;
       font-weight: 900;

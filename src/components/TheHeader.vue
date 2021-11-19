@@ -28,7 +28,6 @@ export default {
   text-align: center;
   align-items: center;
   cursor: pointer;
-  border: 1px solid #000000;
   padding-left: 24px;
   padding-right: 24px;
 }

@@ -43,7 +43,6 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  font-family: Noto Sans TC;
   font-style: normal;
   font-weight: normal;
   font-size: 13px;
@@ -62,7 +61,6 @@ button {
   padding: 12px;
   border: 2px solid #000000;
   border-radius: 10px;
-  font-family: Noto Sans TC;
   font-style: normal;
   font-weight: normal;
   font-size: 16px;

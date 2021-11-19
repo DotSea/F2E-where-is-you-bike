@@ -1,11 +1,17 @@
 <template>
   <div class="footer bg-yellow">
-    <button class="btn rent-bike">
-      <RentBike class="icon" />
+    <button
+      @click="selectButton"
+      :class="{ btn: true, 'rent-bike': true, 'focus-type': this.isSelectRent }"
+    >
+      <RentBike :class="{ icon: true, 'focus-icon-rent': this.isSelectRent }" />
       <p>租車</p>
     </button>
-    <button class="btn parking-bike">
-      <ParkingBike class="icon" />
+    <button
+      @click="selectButton"
+      :class="{ btn: true, 'parking-bike': true, 'focus-type': !this.isSelectRent }"
+    >
+      <ParkingBike :class="{ icon: true, 'focus-icon-parking': !this.isSelectRent }" />
       <p>還車</p>
     </button>
   </div>
@@ -17,7 +23,16 @@ import ParkingBike from '../assets/svg/parking-bike.svg';
 
 export default {
   name: 'TheFooter',
+  data() {
+    return { isSelectRent: true };
+  },
   components: { RentBike, ParkingBike },
+  methods: {
+    selectButton() {
+      this.isSelectRent = !this.isSelectRent;
+      this.eventBus.emit('changeButton', this.isSelectRent);
+    },
+  },
 };
 </script>
 
@@ -35,12 +50,30 @@ export default {
   color: #000000;
   p {
     margin-left: 10px;
-    font-family: Noto Sans TC;
     font-style: normal;
     font-weight: normal;
     font-size: 17px;
     line-height: 64px;
     letter-spacing: 1em;
+  }
+}
+
+.focus-type {
+  color: #ffffff;
+}
+</style>
+<style lang="scss">
+.focus-icon-rent {
+  path {
+    fill: #ffffff;
+  }
+}
+.focus-icon-parking {
+  path {
+    fill: #fed801;
+  }
+  rect {
+    fill: white;
   }
 }
 </style>
