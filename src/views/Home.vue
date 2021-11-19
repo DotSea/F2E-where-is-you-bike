@@ -8,8 +8,8 @@
       </div>
       <div class="button-group">
         <router-link to="/bike"> <button>尋找Youbike</button></router-link>
-        <button>查詢自行車道</button>
-        <button>附近景點、美食</button>
+        <button disabled>查詢自行車道(施工中)</button>
+        <button disabled>附近景點、美食(施工中)</button>
       </div>
       <div class="footer">Where’s YouBike © Code: DotSea / Design: KT</div>
     </div>
