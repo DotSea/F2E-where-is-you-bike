@@ -122,7 +122,10 @@ export default {
     },
     // init map
     setMap(latitude, longitude) {
-      this.map = L.map('map', { zoomAnimation: false }).setView([latitude, longitude], 17);
+      this.map = L.map('map', { zoomAnimation: false, tap: false }).setView(
+        [latitude, longitude],
+        17,
+      );
       L.tileLayer(
         'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}',
         {
