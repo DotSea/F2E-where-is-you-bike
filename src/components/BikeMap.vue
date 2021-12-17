@@ -40,6 +40,8 @@
 import axios from 'axios';
 import jsSHA from 'jssha';
 import L from 'leaflet';
+import { MarkerClusterGroup } from 'leaflet.markercluster/src';
+
 import CurrentLocation from '../assets/svg/current-location.svg';
 import SearchStation from '../assets/svg/search-station-mobile.svg';
 
@@ -68,10 +70,6 @@ export default {
       stationKeyWord: '',
       searchResult: [],
       isSearchResultOpen: false,
-      stationSVG:
-        '<svg width="36" height="50" viewBox="0 0 36 50" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M0 18.0726C0 8.09194 8.05911 0 17.9993 0C27.9409 0 36 8.09194 36 18.0726C36 26.8625 29.7496 34.1853 21.4692 35.8091L19.1796 42.1448C18.7795 43.2515 17.2205 43.2515 16.8204 42.1448L14.5308 35.8091C6.25038 34.1853 0 26.8625 0 18.0726ZM25.3249 47.8777C25.3249 49.0498 22.0451 50 17.9992 50C13.9534 50 10.6735 49.0498 10.6735 47.8777C10.6735 46.7055 13.9534 45.7553 17.9992 45.7553C22.0451 45.7553 25.3249 46.7055 25.3249 47.8777Z" fill="#FED801"/></svg>',
-      iconSVG:
-        '<svg width="12" height="16" viewBox="0 0 12 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 0.142857C2.95929 0.142857 0.5 2.60214 0.5 5.64286C0.5 9.76786 6 15.8571 6 15.8571C6 15.8571 11.5 9.76786 11.5 5.64286C11.5 2.60214 9.04071 0.142857 6 0.142857ZM6 7.60714C4.91571 7.60714 4.03571 6.72714 4.03571 5.64286C4.03571 4.55857 4.91571 3.67857 6 3.67857C7.08429 3.67857 7.96429 4.55857 7.96429 5.64286C7.96429 6.72714 7.08429 7.60714 6 7.60714Z" fill="black"/></svg>',
       map: '',
       dragDistance: {
         startCoord: [0, 0],
@@ -115,26 +113,22 @@ export default {
       this.map.scrollWheelZoom.disable();
       if (this.stationKeyWord) {
         this.searchResult = [];
-        this.cityName.forEach((city) => {
-          axios
-            .get(
-              `https://ptx.transportdata.tw/MOTC/v2/Bike/Station/${city}?$filter=contains(StationName%2FZh_tw%2C%20'${this.stationKeyWord}')&$top=30&$format=JSON`,
-              { headers: this.authorizationHeader },
-            )
-            .then((res) => {
-              const stationNameList = res.data.map((item) => Object.values(item)[3].Zh_tw);
-              const stationInfo = res.data.map((item) => {
-                const info = {};
-                [info.stationUID] = Object.values(item);
-                [, , , , info.coordinate] = Object.values(item);
-                info.name = Object.values(item)[3].Zh_tw;
-                info.city = city;
-                return info;
-              });
-              if (stationNameList.length !== 0) {
-                this.searchResult.push(...stationInfo);
-              }
-            });
+        this.cityName.forEach(async (city) => {
+          const res = await axiosInstance.get(
+            `Station/${city}?$filter=contains(StationName%2FZh_tw%2C%20'${this.stationKeyWord}')&$top=30&$format=JSON`,
+          );
+          const stationNameList = res.data.map((item) => Object.values(item)[3].Zh_tw);
+          const stationInfo = res.data.map((item) => {
+            const info = {};
+            [info.stationUID] = Object.values(item);
+            [, , , , info.coordinate] = Object.values(item);
+            info.name = Object.values(item)[3].Zh_tw;
+            info.city = city;
+            return info;
+          });
+          if (stationNameList.length !== 0) {
+            this.searchResult.push(...stationInfo);
+          }
         });
       }
     },
@@ -151,7 +145,7 @@ export default {
           attribution:
             '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
           maxZoom: 19,
-          minZoom: 15,
+          minZoom: 14,
           id: 'mapbox/streets-v11',
           tileSize: 512,
           zoomOffset: -1,
@@ -172,7 +166,6 @@ export default {
           this.dragDistance.startCoord[1] - this.dragDistance.endCoord[1],
         ];
         if (dragDistance.some((item) => Math.abs(item) > 0.003)) {
-          this.markers.clearLayers();
           await this.getNearbyStation(this.dragDistance.endCoord[0], this.dragDistance.endCoord[1]);
           this.setStationMarker(this.nearbyStationCoord);
         }
@@ -202,8 +195,6 @@ export default {
     // 回到使用者目前位置
     async backToCurrentLocation() {
       this.map.setView([this.coordinate.latitude, this.coordinate.longitude], 17);
-      /// 清除拖曳畫面上的站點marker
-      this.markers.clearLayers();
       /// 重新取得使用者位置附近站點資訊
       await this.getNearbyStation(this.coordinate.latitude, this.coordinate.longitude);
       this.setStationMarker(this.nearbyStationCoord);
@@ -240,29 +231,23 @@ export default {
     },
     // 設置站牌的marker
     setStationMarker(nearbyStation) {
+      this.markers.clearLayers(); /// 清除原本的站點marker
       nearbyStation.forEach((item) => {
         const coord = [item.StationPosition.PositionLat, item.StationPosition.PositionLon];
-        /// marker 的icon
         const stationIcon = new L.divIcon({
-          html: this.stationSVG,
-          className: `${this.isSelectRent ? '' : 'station-icon-parking'}`,
-          iconAnchor: [18, 21],
-        });
-        /// icon上的數字
-        const iconNum = new L.divIcon({
-          html: `<p>${this.isSelectRent ? item.AvailableRentBikes : item.AvailableReturnBikes}</p>`,
-          className: `${this.isSelectRent ? 'icon-num' : 'icon-num-parking'}`,
+          html: `<div class='station-marker ${
+            this.isSelectRent ? 'station-renting' : 'station-parking'
+          }'>${this.isSelectRent ? item.AvailableRentBikes : item.AvailableReturnBikes}</div>`,
           iconAnchor: [7, 12],
+          className: 'no-shadow',
         });
-
-        const pop = new L.popup({ className: 'station-popup', offset: [0, -8] })
+        const pop = new L.popup({ className: 'station-popup', offset: [7, 12] })
           .setLatLng(coord)
           .setContent(
             `<p>${item.StationName.Zh_tw}</p><p>可借車輛<span class="popup-number">${item.AvailableRentBikes}</span></p><p>可停空位<span class="popup-number">${item.AvailableReturnBikes}</span></p>`,
           );
         const marker = (icon) => new L.marker(coord, { id: item.StationUID }).setIcon(icon);
         this.markers.addLayer(marker(stationIcon).bindPopup(pop).openPopup());
-        this.markers.addLayer(marker(iconNum).bindPopup(pop).openPopup());
         this.markers.addTo(this.map);
       });
     },
@@ -285,25 +270,30 @@ export default {
       ];
     },
     markers() {
-      return new L.featureGroup();
+      // bug: 切換租還車時無法清除原本站點icon
+      return new MarkerClusterGroup();
     },
-
-    authorizationHeader() {
-      const AppID = process.env.VUE_APP_API_ID;
-      const AppKey = process.env.VUE_APP_API_KEY;
-      const GMTString = new Date().toGMTString();
-      const ShaObj = new jsSHA('SHA-1', 'TEXT');
-      ShaObj.setHMACKey(AppKey, 'TEXT');
-      ShaObj.update(`x-date: ${GMTString}`);
-      const HMAC = ShaObj.getHMAC('B64');
-      const Authorization = `hmac username="${AppID}", algorithm="hmac-sha1", headers="x-date", signature="${HMAC}"`;
-      return { Authorization, 'X-Date': GMTString };
+    markersOfRent() {
+      // bug: 切換租還車時無法清除原本站點icon
+      return new MarkerClusterGroup({
+        removeOutsideVisibleBounds: true,
+        spiderLegPolylineOptions: { color: '#fed801' },
+      });
+    },
+    markersOfReturn() {
+      // bug: 切換租還車時無法清除原本站點icon
+      return new MarkerClusterGroup({
+        removeOutsideVisibleBounds: true,
+        spiderLegPolylineOptions: { color: '#fed801' },
+      });
     },
   },
   watch: {
     stationKeyWord(newval) {
+      /// 鍵入站點關鍵字時，清空搜尋結果
       this.searchResult = [];
       if (!newval) {
+        /// 若關鍵字為空時，關閉搜尋模式，否則則開啟
         this.isSearchResultOpen = false;
       } else {
         this.isSearchResultOpen = true;
@@ -311,11 +301,12 @@ export default {
     },
     coordinate: {
       deep: true,
-      handler(newval) {
+      async handler(newval) {
         this.map.removeLayer(this.userMarker);
         this.map.removeLayer(this.circleMarker);
-        this.markers.clearLayers();
         this.setUserLocationMarker(newval.latitude, newval.longitude);
+        await this.getNearbyStation(this.coordinate.latitude, this.coordinate.longitude);
+        this.setStationMarker(this.nearbyStationCoord);
         this.dragDistance.startCoord = [this.map.getCenter().lat, this.map.getCenter().lng];
       },
     },
@@ -425,31 +416,27 @@ export default {
 }
 </style>
 <style lang="scss">
-.icon-num {
+.station-marker {
+  background-position: center;
+  background-size: cover;
+  padding-top: 10px;
   font-family: 'Roboto', sans-serif;
+  padding-top: 10px;
   font-size: 15px;
   font-style: italic;
   font-weight: 900;
   line-height: 18px;
   letter-spacing: 0em;
   text-align: center;
+  width: 36px;
+  height: 50px;
 }
-.icon-num-parking {
+.station-renting {
+  background-image: url('~@/assets/svg/station-icon-yellow.png');
+}
+.station-parking {
+  background-image: url('~@/assets/svg/station-icon-black.png');
   color: #fed801;
-  font-family: 'Roboto', sans-serif;
-  font-size: 15px;
-  font-style: italic;
-  font-weight: 900;
-  line-height: 18px;
-  letter-spacing: 0em;
-  text-align: center;
-}
-.station-icon-parking {
-  svg {
-    path {
-      fill: #000;
-    }
-  }
 }
 .station-popup {
   font-family: 'Noto Sans CJK TC';
