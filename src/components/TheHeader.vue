@@ -14,21 +14,3 @@ export default {
   components: { BackToHome },
 };
 </script>
-
-<style lang="scss" scoped>
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.back-to-home {
-  height: 64px;
-  background: inherit;
-  justify-content: center;
-  text-align: center;
-  align-items: center;
-  cursor: pointer;
-  padding-left: 24px;
-  padding-right: 24px;
-}
-</style>
