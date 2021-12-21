@@ -1,6 +1,6 @@
-@import './base/base.scss';
 @import './helpers/variables.scss';
-
+@import './helpers/breakpoint.scss';
+@import './base/base.scss';
 @import './pages/page.scss';
 @import './components/map.scss';
 @import './components/header.scss';

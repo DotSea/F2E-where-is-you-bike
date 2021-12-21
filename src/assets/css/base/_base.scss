@@ -1,35 +1,36 @@
 *,
 *::before,
 *::after {
-	box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 html,
 body {
-	font-family: "Noto Sans CJK TC", "Noto Sans CJK", Helvetica, "Helvetica Neue",
-		"Segoe UI", "Roboto", "Source Han Sans", "PingFang TC", "Hiragino Sans GB",
-		"Microsoft JhengHei", "微軟正黑體", Arial, sans-serif;
-	color: #000000;
-	height: auto;
-	box-sizing: border-box;
-	overflow-y: hidden;
+  font-family: 'Noto Sans CJK TC', 'Noto Sans CJK', Helvetica, 'Helvetica Neue', 'Segoe UI',
+    'Roboto', 'Source Han Sans', 'PingFang TC', 'Hiragino Sans GB', 'Microsoft JhengHei',
+    '微軟正黑體', Arial, sans-serif;
+  color: #000000;
+  height: auto;
+  box-sizing: border-box;
+  overflow-y: hidden;
+  font-size: 16px;
 }
 .container {
-	height: 100vh;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .header,
 .footer {
-	height: 64px;
+  height: 64px;
 }
 .bg-yellow {
-	background: #fed801;
+  background: $yellow;
 }
 button {
-	cursor: pointer;
-	background-color: inherit;
-	border: none;
+  cursor: pointer;
+  background-color: inherit;
+  border: none;
 }
