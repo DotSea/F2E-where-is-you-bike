@@ -1,7 +1,9 @@
 import { createRouter, createWebHashHistory } from 'vue-router';
 import Home from '../views/Home.vue';
 import FindingBike from '../views/FindingBike.vue';
-import FindingRoute from '../views/FindingRoute.vue';
+import SearchingBikeway from '../views/SearchingBikeway.vue';
+import BikewayList from '../components/BikewayList.vue';
+import BikewayMap from '../components/BikewayMap.vue';
 
 const routes = [
   {
@@ -15,17 +17,28 @@ const routes = [
     component: FindingBike,
   },
   {
-    path: '/route',
-    name: 'FindingRoute',
-    component: FindingRoute,
-  },
-  {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue'),
+    path: '/bikeway',
+
+    name: 'SearchingBikeway',
+    component: SearchingBikeway,
+    children: [
+      {
+        name: 'BikewayList',
+        path: '',
+        component: BikewayList,
+        props: (route) => ({ bikewayData: route.params.bikewayData, city: route.query.city }),
+      },
+      {
+        name: 'BikewayMap',
+        path: '',
+        component: BikewayMap,
+        props: (route) => ({
+          routeData: route.params.routeData,
+          city: route.query.city,
+          id: route.query.id,
+        }),
+      },
+    ],
   },
 ];
 

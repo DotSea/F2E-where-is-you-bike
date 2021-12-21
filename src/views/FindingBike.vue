@@ -17,16 +17,3 @@ export default {
   components: { TheHeader, TheFooter, BikeMap },
 };
 </script>
-<style lang="scss" scoped>
-.container {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.header,
-.footer {
-  height: 64px;
-}
-</style>
