@@ -15,17 +15,18 @@ export default {
   data() {
     return {};
   },
+  inject: ['getBikewayData'],
   methods: {
     backToPreviousPage() {
-      if (this.$route.query.city) {
+      if (this.$route.query.id) {
+        this.$router.push({ name: 'SearchingBikeway', query: { city: this.$route.query.city } });
+        this.$router.go();
+      } else if (this.$route.query.city) {
         this.$router.push({ name: 'SearchingBikeway' });
       } else {
         this.$router.push({ name: 'Home' });
       }
     },
-  },
-  mounted() {
-    console.log(this.$route.query);
   },
 };
 </script>

@@ -19,6 +19,8 @@ export default {
   },
   methods: {
     async getBikewayData(city) {
+      this.isRouteSelected = false;
+      this.selectedCity = city;
       const res = await this.axiosInstance.get(`/Cycling/Shape/${city}`);
       this.bikewayData = res.data;
       await this.$router.push({
@@ -35,11 +37,6 @@ export default {
         query: { city: this.$route.query.city, id: index },
       });
     },
-    async selectCity(city) {
-      this.isRouteSelected = false;
-      this.selectedCity = city;
-      await this.getBikewayData(city);
-    },
   },
   components: { TheHeader },
   provide() {
@@ -47,7 +44,7 @@ export default {
       selectRoute: this.selectRoute,
       isRouteSelected: () => this.isRouteSelected,
       selectedCity: () => this.selectedCity,
-      selectCity: this.selectCity,
+      getBikewayData: this.getBikewayData,
     };
   },
   mounted() {
@@ -55,5 +52,14 @@ export default {
       this.getBikewayData(this.$route.query.city);
     }
   },
+  //   beforeRouteUpdate(to, from) {
+  //     if ((to.query.city && !to.query.id) || (!from.query.city && from.query.id)) {
+  //       this.getBikewayData(to.query.city);
+  //       console.log('change');
+  //     } else {
+  //       console.log('not list page');
+  //     }
+  //     console.log(from.params);
+  //   },
 };
 </script>

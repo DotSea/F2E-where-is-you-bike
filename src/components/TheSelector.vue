@@ -16,7 +16,7 @@
         @click="
           this.isSelectorOpen = false;
           this.selected = cityZhName;
-          this.selectCity(cityEnName);
+          this.getBikewayData(cityEnName);
         "
       >
         {{ cityZhName }}
@@ -61,7 +61,15 @@ export default {
       };
     },
   },
-  inject: ['selectCity'],
+  watch: {
+    '$route.query.city': {
+      handler() {
+        const city = Object.keys(this.citys).find((item) => item === this.$route.query.city);
+        this.selected = this.citys[city] || '請選擇城市';
+      },
+    },
+  },
+  inject: ['getBikewayData'],
   mounted() {
     const city = Object.keys(this.citys).find((item) => item === this.$route.query.city);
     this.selected = this.citys[city] || '請選擇城市';
