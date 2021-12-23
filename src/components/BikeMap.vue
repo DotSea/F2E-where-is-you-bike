@@ -102,6 +102,8 @@ export default {
       this.setStationMarker(this.nearbyStationCoord);
       this.markers.eachLayer((marker) => {
         if (marker.options.id === station.stationUID) {
+          const stationInView = this.markers.getVisibleParent(marker);
+          stationInView.spiderfy();
           marker.openPopup();
         }
       });
@@ -144,7 +146,6 @@ export default {
         {
           attribution:
             '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-          maxZoom: 19,
           minZoom: 14,
           id: 'mapbox/streets-v11',
           tileSize: 512,
@@ -271,21 +272,7 @@ export default {
     },
     markers() {
       // bug: 切換租還車時無法清除原本站點icon
-      return new MarkerClusterGroup();
-    },
-    markersOfRent() {
-      // bug: 切換租還車時無法清除原本站點icon
-      return new MarkerClusterGroup({
-        removeOutsideVisibleBounds: true,
-        spiderLegPolylineOptions: { color: '#fed801' },
-      });
-    },
-    markersOfReturn() {
-      // bug: 切換租還車時無法清除原本站點icon
-      return new MarkerClusterGroup({
-        removeOutsideVisibleBounds: true,
-        spiderLegPolylineOptions: { color: '#fed801' },
-      });
+      return new MarkerClusterGroup({ spiderfyOnMaxZoom: true });
     },
   },
   watch: {
@@ -318,6 +305,10 @@ export default {
           //  取得使用者目前位置，並儲存使用者位置座標
           this.coordinate.latitude = position.coords.latitude;
           this.coordinate.longitude = position.coords.longitude;
+          //   const res = await axios.get(
+          //     `https://api.nlsc.gov.tw/other/TownVillagePointQuery/${this.coordinate.longitude}/${this.coordinate.latitude}`,
+          //   );
+          //   console.log(res);
           // 設置leaflet以及圖資
           this.setMap(this.coordinate.latitude, this.coordinate.longitude);
           // 設置user位置的icon
