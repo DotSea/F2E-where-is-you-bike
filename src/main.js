@@ -2,8 +2,21 @@ import { createApp } from 'vue';
 import mitt from 'mitt';
 import axios from 'axios';
 import jsSHA from 'jssha';
+import { Icon } from 'leaflet';
+import LeafletIconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
+import LeafletIconUrl from 'leaflet/dist/images/marker-icon.png';
+import LeafletShadowUrl from 'leaflet/dist/images/marker-shadow.png';
+
 import App from './App.vue';
 import router from './router';
+import 'leaflet/dist/leaflet.css';
+// eslint-disable-next-line
+delete Icon.Default.prototype._getIconUrl;
+Icon.Default.mergeOptions({
+  iconRetinaUrl: LeafletIconRetinaUrl,
+  iconUrl: LeafletIconUrl,
+  shadowUrl: LeafletShadowUrl,
+});
 
 /* eslint new-cap: ["error", { "newIsCap": false }] */
 

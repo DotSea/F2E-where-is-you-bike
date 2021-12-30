@@ -1,8 +1,12 @@
 <template>
   <p v-if="!this.bikewayData" class="not-choose-city">尚未選擇任何縣市</p>
   <ul v-else class="card-list">
-    <li class="card-item" v-for="(route, index) in JSON.parse(this.bikewayData)" :key="index">
-      <ResultCard v-if="route" :route-id="index">
+    <li
+      class="card-item bikeway-item"
+      v-for="(route, index) in JSON.parse(this.bikewayData)"
+      :key="index"
+    >
+      <ResultCard v-if="route" @click="selectRoute(index)">
         <template v-slot:route-name>{{ route.RouteName }}</template>
         <template v-slot:direction>{{ route.Direction }}</template>
         <template v-slot:length>
@@ -30,7 +34,7 @@ export default {
     return { city: '' };
   },
   components: { ResultCard },
-  inject: ['getBikewayData'],
+  inject: ['getBikewayData', 'selectRoute'],
   beforeRouteUpdate(to) {
     this.getBikewayData(to.query.city);
     console.log('update');

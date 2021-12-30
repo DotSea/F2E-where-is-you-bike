@@ -6,27 +6,38 @@
   justify-content: flex-start;
   overflow-x: auto;
   padding: 25px;
-
   @include media-breakpoint-up(md) {
     flex-direction: row;
     justify-content: space-between;
     align-content: flex-start;
     flex-wrap: wrap;
   }
-  @include media-breakpoint-up(lg) {
+  @include media-breakpoint-up(xl) {
     padding: 42px 90px;
   }
   .card-item {
+    display: flex;
+    font-size: 16px;
+    border-radius: 6px;
     padding: 12px;
     box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.1);
     background: #ffffff;
     margin-bottom: 10px;
     width: 100%;
-    max-height: 80px;
+    &.bikeway-item {
+      height: 80px;
+      flex-direction: column;
+      justify-content: center;
+    }
+    &.spot-item {
+      height: 100px;
+      flex-direction: row;
+      justify-content: space-between;
+    }
     @include media-breakpoint-up(md) {
       width: 48%;
     }
-    @include media-breakpoint-up(lg) {
+    @include media-breakpoint-up(xl) {
       width: 33%;
       &:last-child:nth-child(3n-1) {
         margin-right: auto;
@@ -46,9 +57,9 @@
 .route-info {
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  align-items: center;
   margin-top: 9px;
-  color: #7a7a7a;
+  color: $gray;
 }
 .route-road {
   font-size: 13px;
@@ -66,4 +77,25 @@
   p {
     margin: 0px 2px;
   }
+}
+.spot-picture {
+  border-radius: 6px;
+}
+.spot-info {
+  margin-right: auto;
+  display: flex;
+  margin-left: 10px;
+  flex-direction: column;
+  justify-content: flex-end;
+  line-height: 30px;
+  .phone-number {
+    font-size: 13px;
+    color: $gray;
+  }
+}
+.spot-distance {
+  font-size: 13px;
+  line-height: 15px;
+  color: $yellow;
+  justify-self: flex-end;
 }

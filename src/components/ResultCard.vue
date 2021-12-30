@@ -1,5 +1,5 @@
 <template>
-  <div @click="selectRoute(this.routeId)" :id="this.routeId">
+  <div>
     <slot class="route-name" name="route-name"></slot>
     <div class="route-info">
       <div class="route-road">
@@ -20,8 +20,6 @@ import RouteMarker from '../assets/svg/route-marker.svg';
 
 export default {
   components: { RouteMarker },
-  props: ['routeId'],
-  inject: ['selectRoute'],
 };
 </script>
 

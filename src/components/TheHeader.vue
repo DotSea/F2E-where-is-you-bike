@@ -1,7 +1,7 @@
 <template>
   <div class="header bg-yellow">
     <button @click="backToPreviousPage" class="back-to-home"><BackToHome /></button>
-    <TheSelector v-if="this.$route.path.match(/bikeway/)" />
+    <TheSelector v-if="this.$route.path.match(/bikeway/) && this.$route.name !== 'BikewayMap'" />
   </div>
 </template>
 
@@ -15,7 +15,6 @@ export default {
   data() {
     return {};
   },
-  inject: ['getBikewayData'],
   methods: {
     backToPreviousPage() {
       if (this.$route.query.id) {

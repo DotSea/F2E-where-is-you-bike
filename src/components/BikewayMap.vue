@@ -1,4 +1,5 @@
 <template>
+  <div class="map-title">{{ this.temp.RouteName }}</div>
   <div ref="mapElement" class="map"></div>
   <!-- {{ this.routeData ? JSON.parse(this.routeData) : '無' }} -->
 </template>
@@ -51,9 +52,9 @@ export default {
           wicket.read(this.temp.Geometry).components[0][0].y,
           wicket.read(this.temp.Geometry).components[0][0].x,
         ];
-        console.log(startCoord);
+        console.log(this.temp.RouteName);
         this.setMap(startCoord);
-
+        console.log(this.$route);
         this.polyLine(this.temp.Geometry);
       }
     } catch (e) {
@@ -62,4 +63,15 @@ export default {
   },
 };
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.map-title {
+  width: 100%;
+  text-align: center;
+  position: absolute;
+  z-index: 999;
+  font-size: 16px;
+  top: 20px;
+  left: 50%;
+  transform: translate(-50%, 0);
+}
+</style>

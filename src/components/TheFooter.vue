@@ -1,18 +1,20 @@
 <template>
   <div class="footer bg-yellow">
-    <button
-      @click="selectButton"
-      :class="{ btn: true, 'rent-bike': true, 'focus-type': this.isSelectRent }"
-    >
-      <RentBike :class="{ icon: true, 'focus-icon-rent': this.isSelectRent }" />
-      <p>租車</p>
+    <button @click="selectButton" :class="{ btn: true, 'focus-type': this.isSelectLeftButton }">
+      <RentBike
+        v-if="this.isBikeMapPage"
+        :class="{ icon: true, 'focus-icon-rent': this.isSelectLeftButton }"
+      />
+      <AttractionIcon v-else :class="{ icon: true, 'focus-icon-rent': this.isSelectLeftButton }" />
+      <p>{{ this.isBikeMapPage ? '租車' : '景點' }}</p>
     </button>
-    <button
-      @click="selectButton"
-      :class="{ btn: true, 'parking-bike': true, 'focus-type': !this.isSelectRent }"
-    >
-      <ParkingBike :class="{ icon: true, 'focus-icon-parking': !this.isSelectRent }" />
-      <p>還車</p>
+    <button @click="selectButton" :class="{ btn: true, 'focus-type': !this.isSelectLeftButton }">
+      <ParkingBike
+        v-if="this.isBikeMapPage"
+        :class="{ icon: true, 'focus-icon-parking': !this.isSelectLeftButton }"
+      />
+      <FoodIcon v-else :class="{ icon: true, 'focus-icon-parking': !this.isSelectLeftButton }" />
+      <p>{{ this.isBikeMapPage ? '還車' : '美食' }}</p>
     </button>
   </div>
 </template>
@@ -20,17 +22,29 @@
 <script>
 import RentBike from '../assets/svg/rent-bike.svg';
 import ParkingBike from '../assets/svg/parking-bike.svg';
+import AttractionIcon from '../assets/svg/attraction.svg';
+import FoodIcon from '../assets/svg/food.svg';
 
 export default {
   name: 'TheFooter',
   data() {
-    return { isSelectRent: true };
+    return { isSelectLeftButton: true };
   },
-  components: { RentBike, ParkingBike },
+  components: {
+    RentBike,
+    ParkingBike,
+    AttractionIcon,
+    FoodIcon,
+  },
+  computed: {
+    isBikeMapPage() {
+      return this.$route.name === 'FindingBike';
+    },
+  },
   methods: {
     selectButton() {
-      this.isSelectRent = !this.isSelectRent;
-      this.eventBus.emit('changeButton', this.isSelectRent);
+      this.isSelectLeftButton = !this.isSelectLeftButton;
+      this.eventBus.emit('changeButton', this.isSelectLeftButton);
     },
   },
 };

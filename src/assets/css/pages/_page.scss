@@ -1,11 +1,15 @@
 .container {
-	height: 100vh;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: #f6f7fb;
+  &.home-page {
+    background: $yellow;
+  }
 }
 
 .header,
 .footer {
-	height: 64px;
+  height: 64px;
 }

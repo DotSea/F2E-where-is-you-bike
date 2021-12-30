@@ -4,6 +4,10 @@ import FindingBike from '../views/FindingBike.vue';
 import SearchingBikeway from '../views/SearchingBikeway.vue';
 import BikewayList from '../components/BikewayList.vue';
 import BikewayMap from '../components/BikewayMap.vue';
+import NearbyTouristSpot from '../views/NearbyTouristSpot.vue';
+import SpotList from '../components/SpotList.vue';
+import SpotInfo from '../components/SpotInfo.vue';
+import SpotMap from '../components/SpotMap.vue';
 
 const routes = [
   {
@@ -16,6 +20,7 @@ const routes = [
     name: 'FindingBike',
     component: FindingBike,
   },
+
   {
     path: '/bikeway',
 
@@ -26,7 +31,7 @@ const routes = [
         name: 'BikewayList',
         path: '',
         component: BikewayList,
-        props: (route) => ({ bikewayData: route.params.bikewayData, city: route.query.city }),
+        props: (route) => ({ bikewayData: route.params.bikewayData }),
       },
       {
         name: 'BikewayMap',
@@ -34,8 +39,33 @@ const routes = [
         component: BikewayMap,
         props: (route) => ({
           routeData: route.params.routeData,
-          city: route.query.city,
-          id: route.query.id,
+        }),
+      },
+    ],
+  },
+  {
+    path: '/tourism',
+    name: 'NearbyTouristSpot',
+    component: NearbyTouristSpot,
+    children: [
+      {
+        name: 'SpotList',
+        path: '',
+        component: SpotList,
+      },
+      {
+        name: 'SpotInfo',
+        path: ':id',
+        props: (route) => ({ Id: route.params.id }),
+        component: SpotInfo,
+      },
+      {
+        name: 'SpotMap',
+        path: '/map',
+        component: SpotMap,
+        props: (route) => ({
+          position: [route.query.lat, route.query.lon],
+          spotName: route.query.spotName,
         }),
       },
     ],
