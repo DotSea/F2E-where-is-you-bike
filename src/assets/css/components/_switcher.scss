@@ -1,0 +1,86 @@
+.switcher-in-desktop {
+  display: none;
+  @include media-breakpoint-up(lg) {
+    display: flex;
+    margin: 0 auto;
+    width: 276px;
+    height: 50%;
+  }
+}
+.switcher-in-mobile-and-tablet {
+  display: flex;
+  flex-grow: 1;
+  @include media-breakpoint-up(lg) {
+    display: none;
+  }
+}
+
+.switcher {
+  display: flex;
+  flex-grow: 1;
+  @include media-breakpoint-up(lg) {
+    flex-grow: 0;
+    margin: 0 auto;
+    height: 100%;
+    width: 100%;
+    background-color: #ffffff;
+    border-radius: 50px;
+  }
+}
+
+.switcher-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #000000;
+  @include media-breakpoint-up(lg) {
+    width: 51%;
+    background-color: #ffffff;
+    border-radius: 50px;
+  }
+  p {
+    margin-left: 10px;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 17px;
+    line-height: 64px;
+    letter-spacing: 1em;
+  }
+}
+
+.focus-type {
+  color: #ffffff;
+}
+.focus-icon-rent {
+  path {
+    fill: #ffffff;
+  }
+}
+.focus-icon-parking {
+  path {
+    fill: $yellow;
+  }
+  rect {
+    fill: white;
+  }
+}
+@include media-breakpoint-up(lg) {
+  .focus-type {
+    color: $yellow;
+    background-color: #000000;
+  }
+  .focus-icon-rent {
+    path {
+      fill: $yellow;
+    }
+  }
+  .focus-icon-parking {
+    path {
+      fill: #000000;
+    }
+    rect {
+      fill: $yellow;
+    }
+  }
+}

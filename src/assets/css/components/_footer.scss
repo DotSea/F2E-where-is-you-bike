@@ -3,35 +3,10 @@
   justify-content: center;
   align-items: center;
 }
-.btn {
-  width: 100%;
+.switcher-in-mobile-and-tablet {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #000000;
-  p {
-    margin-left: 10px;
-    font-style: normal;
-    font-weight: normal;
-    font-size: 17px;
-    line-height: 64px;
-    letter-spacing: 1em;
-  }
-}
-
-.focus-type {
-  color: #ffffff;
-}
-.focus-icon-rent {
-  path {
-    fill: #ffffff;
-  }
-}
-.focus-icon-parking {
-  path {
-    fill: $yellow;
-  }
-  rect {
-    fill: white;
+  flex-grow: 1;
+  @include media-breakpoint-up(lg) {
+    display: none;
   }
 }
