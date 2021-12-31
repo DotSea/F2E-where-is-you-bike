@@ -17,14 +17,28 @@ export default {
   },
   methods: {
     backToPreviousPage() {
-      if (this.$route.query.id) {
-        this.$router.push({ name: 'SearchingBikeway', query: { city: this.$route.query.city } });
-        this.$router.go();
-      } else if (this.$route.query.city) {
-        this.$router.push({ name: 'SearchingBikeway' });
+      const { fullPath } = this.$route;
+      const slicePosition = Math.max(
+        fullPath.lastIndexOf('/'),
+        fullPath.lastIndexOf('&'),
+        fullPath.lastIndexOf('?'),
+      );
+      const afterSlice = fullPath.slice(0, slicePosition);
+      if (this.$route.name === 'SpotMap') {
+        this.$router.push({ name: 'SpotInfo' });
       } else {
-        this.$router.push({ name: 'Home' });
+        this.$router.push(slicePosition === 0 ? '/' : afterSlice);
       }
+      //   if (this.$route.query.id) {
+
+      //     this.$router.push({ name: 'SearchingBikeway', query:
+      // { city: this.$route.query.city } });
+      //     this.$router.go();
+      //   } else if (this.$route.query.city) {
+      //     this.$router.push({ name: 'SearchingBikeway' });
+      //   } else {
+      //     this.$router.push({ name: 'Home' });
+      //   }
     },
   },
 };

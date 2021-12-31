@@ -46,14 +46,11 @@ export default {
           `/Tourism/ScenicSpot?%24top=30&%24spatialFilter=nearby(${position.coords.latitude}%2C%20${position.coords.longitude}%2C%203000)&%24format=JSON`,
         );
         // 找附近五公里內的美食
-        console.log(ScenicSpot.data);
         const Restaurant = await this.axiosInstance.get(
           `/Tourism/Restaurant?%24top=30&%24spatialFilter=nearby(${position.coords.latitude}%2C%20${position.coords.longitude}%2C%203000)&%24format=JSON`,
         );
         this.ScenicSpot = ScenicSpot.data;
         this.Restaurant = Restaurant.data;
-
-        console.log(Restaurant.data);
       });
     }
   },

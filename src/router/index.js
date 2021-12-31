@@ -56,12 +56,12 @@ const routes = [
       {
         name: 'SpotInfo',
         path: ':id',
-        props: (route) => ({ Id: route.params.id }),
+        props: (route) => ({ id: route.params.id }),
         component: SpotInfo,
       },
       {
         name: 'SpotMap',
-        path: '/map',
+        path: ':id/map',
         component: SpotMap,
         props: (route) => ({
           position: [route.query.lat, route.query.lon],

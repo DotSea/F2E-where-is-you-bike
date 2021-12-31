@@ -18,7 +18,7 @@
       <div class="address">
         <LocationIcon />
         <span>{{ this.SpotInfo.Address }}</span>
-        <button type="button" class="map-button" @click="goToPage(this.Id)">地圖</button>
+        <button type="button" class="map-button" @click="goToPage(this.id)">地圖</button>
       </div>
       <div class="description">
         {{ this.SpotInfo.DescriptionDetail || this.SpotInfo.Description }}
@@ -51,17 +51,15 @@ export default {
     },
   },
   components: { TimeIcon, PhoneIcon, LocationIcon },
-  props: ['Id'],
+  props: ['id'],
   async mounted() {
-    const isScenicSpot = this.Id.slice(0, 2) === 'C1' ? 'ScenicSpot' : 'Restaurant';
+    const isScenicSpot = this.id.slice(0, 2) === 'C1' ? 'ScenicSpot' : 'Restaurant';
 
     const res = await this.axiosInstance.get(
-      `/Tourism/${isScenicSpot}?%24filter=(${isScenicSpot}ID%20eq%20%27${this.Id}%27)&%24format=JSON`,
+      `/Tourism/${isScenicSpot}?%24filter=(${isScenicSpot}ID%20eq%20%27${this.id}%27)&%24format=JSON`,
     );
     [this.SpotInfo] = res.data;
-    console.log(this.SpotInfo.ScenicSpotName);
     this.pictureInfo = this.SpotInfo.Picture;
-    console.log(this.pictureInfo);
   },
 };
 </script>

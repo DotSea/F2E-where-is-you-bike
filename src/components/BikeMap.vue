@@ -305,10 +305,6 @@ export default {
           //  取得使用者目前位置，並儲存使用者位置座標
           this.coordinate.latitude = position.coords.latitude;
           this.coordinate.longitude = position.coords.longitude;
-          //   const res = await axios.get(
-          //     `https://api.nlsc.gov.tw/other/TownVillagePointQuery/${this.coordinate.longitude}/${this.coordinate.latitude}`,
-          //   );
-          //   console.log(res);
           // 設置leaflet以及圖資
           this.setMap(this.coordinate.latitude, this.coordinate.longitude);
           // 設置user位置的icon

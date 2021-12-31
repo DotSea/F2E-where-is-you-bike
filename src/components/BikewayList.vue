@@ -33,11 +33,23 @@ export default {
   data() {
     return { city: '' };
   },
+  watch: {
+    '$route.query.city': {
+      handler() {
+        if (this.$route.query.city) {
+          this.getBikewayData(this.$route.query.city);
+        }
+      },
+    },
+  },
   components: { ResultCard },
   inject: ['getBikewayData', 'selectRoute'],
-  beforeRouteUpdate(to) {
-    this.getBikewayData(to.query.city);
-    console.log('update');
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      if (!vm.bikewayData && vm.$route.query.city) {
+        vm.getBikewayData(vm.$route.query.city);
+      }
+    });
   },
 };
 </script>

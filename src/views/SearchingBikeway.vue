@@ -28,6 +28,7 @@ export default {
         params: { city, bikewayData: JSON.stringify(this.bikewayData) },
         query: { city },
       });
+      console.log('get data');
     },
     selectRoute(index) {
       this.isRouteSelected = true;
@@ -47,19 +48,5 @@ export default {
       getBikewayData: this.getBikewayData,
     };
   },
-  mounted() {
-    if (this.$route.query.city) {
-      this.getBikewayData(this.$route.query.city);
-    }
-  },
-  //   beforeRouteUpdate(to, from) {
-  //     if ((to.query.city && !to.query.id) || (!from.query.city && from.query.id)) {
-  //       this.getBikewayData(to.query.city);
-  //       console.log('change');
-  //     } else {
-  //       console.log('not list page');
-  //     }
-  //     console.log(from.params);
-  //   },
 };
 </script>
