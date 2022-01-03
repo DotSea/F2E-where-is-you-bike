@@ -43,3 +43,38 @@
     }
   }
 }
+
+@keyframes changewidth {
+  from {
+    transform: scale(1, 1);
+  }
+
+  to {
+    transform: scale(2, 2);
+  }
+}
+
+.GPS {
+  border-radius: 50%;
+  box-shadow: 0 0 0 16px rgb(245, 209, 0), 1.5px 1.5px 1px 16px rgba(0, 0, 0, 0.1);
+}
+.radar-animation {
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 0 0 16px rgba(254, 216, 1, 0.2);
+  animation: radar 3s infinite;
+}
+@keyframes radar {
+  0% {
+    box-shadow: 0 0 0 16px rgba(254, 216, 1, 0.2);
+  }
+  40% {
+    box-shadow: 0 0 0 40px rgba(254, 216, 1, 0.2);
+  }
+  80% {
+    box-shadow: 0 0 0 16px rgba(254, 216, 1, 0.2);
+  }
+  100% {
+    box-shadow: 0 0 0 16px rgba(254, 216, 1, 0);
+  }
+}

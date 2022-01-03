@@ -36,12 +36,10 @@
 <script>
 /* eslint new-cap: ["error", { "newIsCap": false }] */
 /* eslint no-param-reassign: ["error", { "props": false }] */
-
 import axios from 'axios';
 import jsSHA from 'jssha';
 import L from 'leaflet';
 import { MarkerClusterGroup } from 'leaflet.markercluster/src';
-
 import CurrentLocation from '../assets/svg/current-location.svg';
 import SearchStation from '../assets/svg/search-station-mobile.svg';
 
@@ -67,6 +65,7 @@ export default {
   components: { CurrentLocation, SearchStation },
   data() {
     return {
+      anim: null,
       stationKeyWord: '',
       searchResult: [],
       isSearchResultOpen: false,
@@ -174,24 +173,24 @@ export default {
     },
     // 設置user位置的marker
     setUserLocationMarker(latitude, longitude) {
-      const iconSVG = '<svg width="12" height="16" viewBox="0 0 12 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 0.142857C2.95929 0.142857 0.5 2.60214 0.5 5.64286C0.5 9.76786 6 15.8571 6 15.8571C6 15.8571 11.5 9.76786 11.5 5.64286C11.5 2.60214 9.04071 0.142857 6 0.142857ZM6 7.60714C4.91571 7.60714 4.03571 6.72714 4.03571 5.64286C4.03571 4.55857 4.91571 3.67857 6 3.67857C7.08429 3.67857 7.96429 4.55857 7.96429 5.64286C7.96429 6.72714 7.08429 7.60714 6 7.60714Z" fill="black"/></svg>';
+      const GPS = '<svg width="12" height="16" viewBox="0 0 12 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 0.142857C2.95929 0.142857 0.5 2.60214 0.5 5.64286C0.5 9.76786 6 15.8571 6 15.8571C6 15.8571 11.5 9.76786 11.5 5.64286C11.5 2.60214 9.04071 0.142857 6 0.142857ZM6 7.60714C4.91571 7.60714 4.03571 6.72714 4.03571 5.64286C4.03571 4.55857 4.91571 3.67857 6 3.67857C7.08429 3.67857 7.96429 4.55857 7.96429 5.64286C7.96429 6.72714 7.08429 7.60714 6 7.60714Z" fill="white"/></svg>';
+
       const myicon = L.divIcon({
-        html: iconSVG,
-        className: '',
+        html: GPS,
+        className: 'GPS',
+      });
+      const circleIcon = L.divIcon({
+        html: '',
+        className: 'radar-animation',
       });
       /// 兩種marker
       this.userMarker = new L.marker([latitude, longitude], { icon: myicon });
-      this.circleMarker = new L.circleMarker([latitude, longitude], {
-        radius: 30,
-        color: '#fed801',
-        opacity: 0.7,
-        weight: 3,
-        fill: true,
-        fillOpacity: 0.1,
-      });
+      this.circleMarker = new L.marker([latitude, longitude], { icon: circleIcon });
       /// 將user marker加入地圖
-      this.map.addLayer(this.userMarker);
       this.map.addLayer(this.circleMarker);
+      this.map.addLayer(this.userMarker);
+
+      console.log(this.anim);
     },
     // 回到使用者目前位置
     async backToCurrentLocation() {
@@ -290,7 +289,6 @@ export default {
       deep: true,
       async handler(newval) {
         this.map.removeLayer(this.userMarker);
-        this.map.removeLayer(this.circleMarker);
         this.setUserLocationMarker(newval.latitude, newval.longitude);
         await this.getNearbyStation(this.coordinate.latitude, this.coordinate.longitude);
         this.setStationMarker(this.nearbyStationCoord);

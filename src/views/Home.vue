@@ -1,7 +1,7 @@
 <template>
   <div class="home-container">
     <div class="title">
-      <TheBike />
+      <div class="test" ref="youbikeIcon"></div>
       <TheLogo class="logo" />
       <p>微笑單車．暢遊城市</p>
     </div>
@@ -17,13 +17,25 @@
 </template>
 
 <script>
+import lottie from 'lottie-web';
+import jsonData from '../assets/svg/youbike.json';
 import TheLogo from '../assets/svg/logo.svg';
-import TheBike from '../assets/svg/bike.svg';
 
 export default {
   name: 'Home',
-  components: { TheLogo, TheBike },
+  components: { TheLogo },
+
+  mounted() {
+    lottie.loadAnimation({
+      container: this.$refs.youbikeIcon, // the dom element that will contain the animation
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      animationData: jsonData, // the path to the animation json
+    });
+  },
+  beforeUnmount() {
+    lottie.destroy();
+  },
 };
 </script>
-
-<style lang="scss" scoped></style>
