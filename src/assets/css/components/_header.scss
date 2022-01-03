@@ -4,7 +4,7 @@
   align-items: center;
 }
 
-.back-to-home {
+.back-to-previous-page {
   height: 64px;
   background: inherit;
   justify-content: center;
@@ -13,4 +13,14 @@
   cursor: pointer;
   padding-left: 24px;
   padding-right: 24px;
+  @include media-breakpoint-up(lg) {
+    display: none;
+  }
+}
+.back-to-home {
+  display: none;
+  @include media-breakpoint-up(lg) {
+    display: block;
+    margin-left: 89px;
+  }
 }

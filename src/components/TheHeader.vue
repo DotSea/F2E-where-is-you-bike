@@ -1,24 +1,36 @@
 <template>
   <div class="header bg-yellow">
-    <button @click="backToPreviousPage" class="back-to-home"><BackToHome /></button>
+    <button @click="backToPreviousPage" class="back-to-previous-page"><GoBack /></button>
+    <button @click="backToHome" class="back-to-home"><BackToHome /></button>
     <div class="switcher-in-desktop">
-      <CategorySwitcher />
+      <CategorySwitcher v-if="!this.isOnBikewayPage && this.isOnSpotList" />
     </div>
 
-    <TheSelector v-if="this.$route.path.match(/bikeway/) && this.$route.name !== 'BikewayMap'" />
+    <TheSelector v-if="this.isOnBikewayPage && this.$route.name !== 'BikewayMap'" />
   </div>
 </template>
 
 <script>
-import BackToHome from '../assets/svg/back.svg';
+import GoBack from '../assets/svg/back.svg';
+import BackToHome from '../assets/svg/logo.svg';
 import TheSelector from './CitySelector.vue';
 import CategorySwitcher from './CategorySwitcher.vue';
 
 export default {
   name: 'TheHeader',
-  components: { BackToHome, TheSelector, CategorySwitcher },
-  data() {
-    return {};
+  components: {
+    GoBack,
+    BackToHome,
+    TheSelector,
+    CategorySwitcher,
+  },
+  computed: {
+    isOnBikewayPage() {
+      return this.$route.path.match(/bikeway/);
+    },
+    isOnSpotList() {
+      return this.$route.name === 'SpotList';
+    },
   },
   methods: {
     backToPreviousPage() {
@@ -35,6 +47,13 @@ export default {
         this.$router.push(slicePosition === 0 ? '/' : afterSlice);
       }
     },
+    backToHome() {
+      this.$router.push({ name: 'Home' });
+    },
+  },
+  mounted() {
+    console.log(this.isOnBikewayPage);
+    console.log(this.$route);
   },
 };
 </script>
