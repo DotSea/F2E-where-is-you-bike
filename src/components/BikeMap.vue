@@ -1,27 +1,26 @@
 <template>
   <div id="map" class="map" @click.self="closeSearch">
     <div class="search">
-      <div class="search-input">
-        <input
-          type="text"
-          placeholder="尋找站點"
-          @focus="openSearch"
-          @keyup.enter="searchStation"
-          @keyup.esc="closeSearch"
-          v-model="this.stationKeyWord"
-        />
-        <SearchStation @click.stop="searchStation" class="search-button" />
-      </div>
-      <div v-if="this.searchResult.length !== 0 && isSearchResultOpen" class="search-result-list">
-        <div
+      <input
+        class="search-input"
+        type="text"
+        placeholder="尋找站點"
+        @focus="openSearch"
+        @keyup.esc="closeSearch"
+        :value="this.stationKeyWord"
+        @input="inputHandler"
+      />
+
+      <ul v-if="this.searchResult.length !== 0 && isSearchResultOpen" class="search-result-list">
+        <li
           class="search-item"
           @click="chooseStation(item)"
           v-for="(item, index) in searchResult"
           :key="index"
         >
           {{ item.name }}
-        </div>
-      </div>
+        </li>
+      </ul>
       <div
         v-else-if="this.searchResult.length === 0 && isSearchResultOpen"
         class="search-result-list"
@@ -42,7 +41,6 @@ import jsSHA from 'jssha';
 import L from 'leaflet';
 import { MarkerClusterGroup } from 'leaflet.markercluster/src';
 import CurrentLocation from '../assets/svg/current-location.svg';
-import SearchStation from '../assets/svg/search-station-mobile.svg';
 import LoadingPage from './LoadingPage.vue';
 
 const authorizationHeader = () => {
@@ -64,7 +62,7 @@ const axiosInstance = axios.create({
 
 export default {
   name: 'BikeMap',
-  components: { CurrentLocation, SearchStation, LoadingPage },
+  components: { CurrentLocation, LoadingPage },
   data() {
     return {
       isLoading: false,
@@ -85,6 +83,10 @@ export default {
     };
   },
   methods: {
+    inputHandler(event) {
+      this.stationKeyWord = event.target.value;
+      this.searchStation();
+    },
     openSearch() {
       this.map.dragging.disable();
       this.map.doubleClickZoom.disable();
@@ -101,7 +103,6 @@ export default {
       await this.map.setView([station.coordinate.PositionLat, station.coordinate.PositionLon], 17);
       await this.getNearbyStation(station.coordinate.PositionLat, station.coordinate.PositionLon);
       this.setStationMarker(this.nearbyStationCoord);
-      this.closeSearch();
       this.markers.eachLayer((marker) => {
         if (marker.options.id === station.stationUID) {
           const stationInView = this.markers.getVisibleParent(marker);
@@ -112,12 +113,11 @@ export default {
           marker.openPopup();
         }
       });
+      this.closeSearch();
     },
     searchStation() {
-      this.map.dragging.disable();
-      this.map.doubleClickZoom.disable();
-      this.map.scrollWheelZoom.disable();
       if (this.stationKeyWord) {
+        console.log('search');
         this.searchResult = [];
         this.cityName.forEach(async (city) => {
           const res = await axiosInstance.get(
@@ -283,9 +283,9 @@ export default {
       this.searchResult = [];
       if (!newval) {
         /// 若關鍵字為空時，關閉搜尋模式，否則則開啟
-        this.isSearchResultOpen = false;
+        this.closeSearch();
       } else {
-        this.isSearchResultOpen = true;
+        this.openSearch();
       }
     },
     coordinate: {
