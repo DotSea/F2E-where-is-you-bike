@@ -40,14 +40,11 @@ export default {
   justify-content: center;
   align-items: center;
   background-color: rgba(0, 0, 0, 0.5);
-  transition: opacity 0.3s ease;
 }
 
 .modal-body {
-  display: block;
   text-align: center;
-  margin: 0 auto;
-  margin-top: -60%;
-  padding: 2rem;
+
+  margin-top: -40%;
 }
 </style>

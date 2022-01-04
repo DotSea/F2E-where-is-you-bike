@@ -1,10 +1,11 @@
 <template>
   <img
+    v-if="SpotData.Picture.PictureUrl1"
     class="spot-picture"
-    :src="SpotData.Picture.PictureUrl1 || require('../assets/no-image-available.webp')"
+    :src="SpotData.Picture.PictureUrl1"
     :alt="SpotData.Picture.PictureDescription1"
   />
-
+  <NoImage v-else class="spot-picture" />
   <div class="spot-info">
     <div class="name">{{ SpotData.ScenicSpotName || SpotData.RestaurantName }}</div>
     <div class="phone-number"><PhoneIcon /> {{ SpotData.Phone }}</div>
@@ -14,9 +15,10 @@
 
 <script>
 import PhoneIcon from '../assets/svg/phone.svg';
+import NoImage from '../assets/svg/no-image-square.svg';
 
 export default {
-  components: { PhoneIcon },
+  components: { PhoneIcon, NoImage },
   props: ['SpotData'],
   mounted() {},
 };

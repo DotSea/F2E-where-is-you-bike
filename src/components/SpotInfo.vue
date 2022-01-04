@@ -2,9 +2,11 @@
   <div class="info-container">
     <div class="info-picture">
       <img
-        :src="this.pictureInfo.PictureUrl1 || require('../assets/no-image-available.webp')"
+        v-if="this.pictureInfo.PictureUrl1"
+        :src="this.pictureInfo.PictureUrl1"
         :alt="this.pictureInfo.PictureDescription1"
       />
+      <NoImage v-else />
     </div>
     <div class="info-detail">
       <div class="open-time">
@@ -31,6 +33,7 @@
 import TimeIcon from '../assets/svg/open-time.svg';
 import PhoneIcon from '../assets/svg/phone.svg';
 import LocationIcon from '../assets/svg/location.svg';
+import NoImage from '../assets/svg/no-image-rectangle.svg';
 
 export default {
   name: 'SpotInfo',
@@ -50,7 +53,12 @@ export default {
       });
     },
   },
-  components: { TimeIcon, PhoneIcon, LocationIcon },
+  components: {
+    TimeIcon,
+    PhoneIcon,
+    LocationIcon,
+    NoImage,
+  },
   props: ['id'],
   async mounted() {
     const isScenicSpot = this.id.slice(0, 2) === 'C1' ? 'ScenicSpot' : 'Restaurant';
@@ -81,8 +89,8 @@ $max-width: 500px;
     background: white;
     box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.1);
     border-radius: 6px;
+    padding: 22px 18.67px;
     img {
-      margin: 22px 18.67px;
       width: $width;
       height: $width/1.5;
       max-width: $max-width;
