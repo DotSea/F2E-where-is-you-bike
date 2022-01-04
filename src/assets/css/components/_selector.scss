@@ -1,0 +1,61 @@
+.custom-select {
+  position: relative;
+  width: 143px;
+  margin-right: 20px;
+  text-align: left;
+  height: 31px;
+  line-height: 31px;
+  @include media-breakpoint-up(lg) {
+    margin-right: 31px;
+  }
+  .selected {
+    background-color: #0a0a0a;
+    border-radius: 31px;
+    border: 1px solid #666666;
+    color: #fff;
+    padding-left: 1em;
+    cursor: pointer;
+    user-select: none;
+    &:after {
+      position: absolute;
+      content: '';
+      top: 14px;
+      right: 1em;
+      width: 0;
+      height: 0;
+      color: white;
+      border: 5px solid transparent;
+      border-color: #fff transparent transparent transparent;
+    }
+    &.open {
+      border: none;
+      border-radius: 15px 15px 0px 0px;
+    }
+  }
+
+  .options {
+    color: #fff;
+    border-radius: 0px 0px 15px 15px;
+    height: 71vh;
+    overflow-y: auto;
+    border: none;
+    position: absolute;
+    background-color: #0a0a0a;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    .option-item {
+      color: #fff;
+      padding-left: 1em;
+      cursor: pointer;
+      user-select: none;
+      &:hover {
+        background-color: darken(#fed801, 5%);
+        color: black;
+      }
+    }
+  }
+}
+.selectHide {
+  display: none;
+}
