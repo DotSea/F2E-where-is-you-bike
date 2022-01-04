@@ -44,7 +44,6 @@ export default {
   },
   props: ['position', 'spotName'],
   mounted() {
-    console.log(this.position);
     this.setMap(this.position[0], this.position[1]);
     L.marker([this.position[0], this.position[1]]).addTo(this.map);
   },

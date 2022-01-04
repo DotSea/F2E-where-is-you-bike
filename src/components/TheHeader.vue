@@ -51,10 +51,6 @@ export default {
       this.$router.push({ name: 'Home' });
     },
   },
-  mounted() {
-    console.log(this.isOnBikewayPage);
-    console.log(this.$route);
-  },
 };
 </script>
 

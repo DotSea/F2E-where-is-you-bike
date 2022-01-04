@@ -32,7 +32,6 @@ export default {
         params: { city, bikewayData: JSON.stringify(this.bikewayData) },
         query: { city },
       });
-      console.log('get data');
       this.isLoading = false;
     },
     selectRoute(index) {
