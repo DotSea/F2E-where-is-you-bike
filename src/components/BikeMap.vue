@@ -101,14 +101,17 @@ export default {
       await this.map.setView([station.coordinate.PositionLat, station.coordinate.PositionLon], 17);
       await this.getNearbyStation(station.coordinate.PositionLat, station.coordinate.PositionLon);
       this.setStationMarker(this.nearbyStationCoord);
+      this.closeSearch();
       this.markers.eachLayer((marker) => {
         if (marker.options.id === station.stationUID) {
           const stationInView = this.markers.getVisibleParent(marker);
-          stationInView.spiderfy();
+          // 沒有id，代表仍為cluster的型態，需要展開cluster
+          if (!stationInView.options.id) {
+            stationInView.spiderfy();
+          }
           marker.openPopup();
         }
       });
-      this.closeSearch();
     },
     searchStation() {
       this.map.dragging.disable();
