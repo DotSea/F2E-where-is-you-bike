@@ -244,7 +244,7 @@ export default {
           iconAnchor: [7, 12],
           className: 'no-shadow',
         });
-        const pop = new L.popup({ className: 'station-popup', offset: [7, 12] })
+        const pop = new L.popup({ className: 'station-popup', offset: [11.5, 2] })
           .setLatLng(coord)
           .setContent(
             `<p>${item.StationName.Zh_tw}</p><p>可借車輛<span class="popup-number">${item.AvailableRentBikes}</span></p><p>可停空位<span class="popup-number">${item.AvailableReturnBikes}</span></p>`,
