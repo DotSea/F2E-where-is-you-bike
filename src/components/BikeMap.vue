@@ -31,6 +31,7 @@
     </div>
     <button class="current-location" @click="backToCurrentLocation"><CurrentLocation /></button>
   </div>
+  <LoadingPage v-if="isLoading" />
 </template>
 
 <script>
@@ -42,6 +43,7 @@ import L from 'leaflet';
 import { MarkerClusterGroup } from 'leaflet.markercluster/src';
 import CurrentLocation from '../assets/svg/current-location.svg';
 import SearchStation from '../assets/svg/search-station-mobile.svg';
+import LoadingPage from './LoadingPage.vue';
 
 const authorizationHeader = () => {
   const AppID = process.env.VUE_APP_API_ID;
@@ -62,10 +64,10 @@ const axiosInstance = axios.create({
 
 export default {
   name: 'BikeMap',
-  components: { CurrentLocation, SearchStation },
+  components: { CurrentLocation, SearchStation, LoadingPage },
   data() {
     return {
-      anim: null,
+      isLoading: false,
       stationKeyWord: '',
       searchResult: [],
       isSearchResultOpen: false,
@@ -136,10 +138,10 @@ export default {
     // init map
     setMap(latitude, longitude) {
       // 設置leaflet以及圖資
-      this.map = L.map('map', { zoomAnimation: false, tap: false }).setView(
-        [latitude, longitude],
-        17,
-      );
+      this.map = L.map('map', { zoomAnimation: false, tap: false });
+
+      this.map.setView([latitude, longitude], 17);
+
       L.tileLayer(
         'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}',
         {
@@ -189,8 +191,6 @@ export default {
       /// 將user marker加入地圖
       this.map.addLayer(this.circleMarker);
       this.map.addLayer(this.userMarker);
-
-      console.log(this.anim);
     },
     // 回到使用者目前位置
     async backToCurrentLocation() {
@@ -296,9 +296,11 @@ export default {
       },
     },
   },
+
   created() {
     try {
       if (navigator.geolocation) {
+        this.isLoading = true;
         navigator.geolocation.getCurrentPosition(async (position) => {
           //  取得使用者目前位置，並儲存使用者位置座標
           this.coordinate.latitude = position.coords.latitude;
@@ -313,6 +315,7 @@ export default {
           this.setStationMarker(this.nearbyStationCoord);
           // 將 user位置設為拖曳點的起始座標
           this.dragDistance.startCoord = [this.coordinate.latitude, this.coordinate.longitude];
+          this.isLoading = false;
         });
       }
     } catch (e) {

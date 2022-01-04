@@ -17,14 +17,6 @@ export default {
     TheHeader,
     TheFooter,
   },
-  //   mounted() {
-  //     if (document.visibilityState === 'visible') {
-  //       console.log('is visible');
-  //     } else {
-  //       console.log('not visible');
-  //     }
-  //     console.log(document.hidden);
-  //   },
 };
 </script>
 

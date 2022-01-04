@@ -3,7 +3,7 @@
   @include media-breakpoint-up(lg) {
     display: flex;
     margin: 0 auto;
-    width: 276px;
+
     height: 50%;
   }
 }
@@ -17,12 +17,10 @@
 
 .switcher {
   display: flex;
-  flex-grow: 1;
   @include media-breakpoint-up(lg) {
-    flex-grow: 0;
-    margin: 0 auto;
     height: 100%;
-    width: 100%;
+    width: 276px;
+    margin-left: -50%;
     background-color: #ffffff;
     border-radius: 50px;
   }

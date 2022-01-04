@@ -9,16 +9,19 @@
       <SpotCard :Spot-Data="Spot" />
     </li>
   </ul>
+  <LoadingPage v-if="isLoading" />
 </template>
 
 <script>
+import LoadingPage from './LoadingPage.vue';
 import SpotCard from './SpotCard.vue';
 
 export default {
   name: 'SpotList',
-  components: { SpotCard },
+  components: { SpotCard, LoadingPage },
   data() {
     return {
+      isLoading: false,
       coordinate: { latitude: '', longitude: '' },
       isScenicSpotPage: true,
       ScenicSpot: '',
@@ -40,6 +43,7 @@ export default {
   },
   created() {
     if (navigator.geolocation) {
+      this.isLoading = true;
       navigator.geolocation.getCurrentPosition(async (position) => {
         // 找附近五公里內的景點
         const ScenicSpot = await this.axiosInstance.get(
@@ -51,6 +55,7 @@ export default {
         );
         this.ScenicSpot = ScenicSpot.data;
         this.Restaurant = Restaurant.data;
+        this.isLoading = false;
       });
     }
   },

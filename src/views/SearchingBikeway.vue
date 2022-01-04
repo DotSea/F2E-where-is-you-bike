@@ -3,10 +3,12 @@
     <TheHeader class="header" />
     <router-view />
   </div>
+  <Loading v-if="isLoading" />
 </template>
 
 <script>
 import TheHeader from '../components/TheHeader.vue';
+import Loading from '../components/LoadingPage.vue';
 
 export default {
   name: 'FindingRoute',
@@ -15,10 +17,12 @@ export default {
       selectedCity: '',
       bikewayData: '',
       isRouteSelected: '',
+      isLoading: false,
     };
   },
   methods: {
     async getBikewayData(city) {
+      this.isLoading = true;
       this.isRouteSelected = false;
       this.selectedCity = city;
       const res = await this.axiosInstance.get(`/Cycling/Shape/${city}`);
@@ -29,6 +33,7 @@ export default {
         query: { city },
       });
       console.log('get data');
+      this.isLoading = false;
     },
     selectRoute(index) {
       this.isRouteSelected = true;
@@ -39,7 +44,7 @@ export default {
       });
     },
   },
-  components: { TheHeader },
+  components: { TheHeader, Loading },
   provide() {
     return {
       selectRoute: this.selectRoute,

@@ -1,7 +1,7 @@
 <template>
   <div class="home-container">
     <div class="title">
-      <div class="test" ref="youbikeIcon"></div>
+      <div ref="youbikeIcon"></div>
       <TheLogo class="logo" />
       <p>微笑單車．暢遊城市</p>
     </div>
