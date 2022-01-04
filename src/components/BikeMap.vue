@@ -141,7 +141,7 @@ export default {
     // init map
     setMap(latitude, longitude) {
       // 設置leaflet以及圖資
-      this.map = L.map('map', { zoomAnimation: false, tap: false });
+      this.map = L.map('map', { zoomAnimation: false, tap: false, zoomControl: false });
 
       this.map.setView([latitude, longitude], 17);
 
