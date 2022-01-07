@@ -117,7 +117,6 @@ export default {
     },
     searchStation() {
       if (this.stationKeyWord) {
-        console.log('search');
         this.searchResult = [];
         this.cityName.forEach(async (city) => {
           const res = await axiosInstance.get(
