@@ -66,10 +66,3 @@ export default {
   },
 };
 </script>
-
-<style>
-img {
-  width: 75px;
-  height: 75px;
-}
-</style>

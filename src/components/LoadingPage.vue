@@ -28,23 +28,3 @@ export default {
   },
 };
 </script>
-<style lang="scss" scoped>
-.modal-mask {
-  position: fixed;
-  z-index: 99999;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
-.modal-body {
-  text-align: center;
-
-  margin-top: -40%;
-}
-</style>

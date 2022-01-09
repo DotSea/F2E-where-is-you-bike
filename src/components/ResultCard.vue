@@ -22,5 +22,3 @@ export default {
   components: { RouteMarker },
 };
 </script>
-
-<style lang="scss" scoped></style>
