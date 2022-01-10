@@ -3,10 +3,10 @@
     <button @click="backToPreviousPage" class="back-to-previous-page"><GoBack /></button>
     <button @click="backToHome" class="back-to-home"><BackToHome /></button>
     <div class="switcher-in-desktop">
-      <CategorySwitcher v-if="!this.isOnBikewayPage && this.isOnSpotList" />
+      <CategorySwitcher v-if="this.isSpotListPage || this.isFindingBikePage" />
     </div>
 
-    <TheSelector v-if="this.isOnBikewayPage && this.$route.name !== 'BikewayMap'" />
+    <TheSelector v-if="this.isBikewayListPage" />
   </div>
 </template>
 
@@ -25,11 +25,15 @@ export default {
     CategorySwitcher,
   },
   computed: {
-    isOnBikewayPage() {
-      return this.$route.path.match(/bikeway/);
+    isBikewayListPage() {
+      //   return this.$route.path.match(/bikeway/);
+      return this.$route.name === 'BikewayList';
     },
-    isOnSpotList() {
+    isSpotListPage() {
       return this.$route.name === 'SpotList';
+    },
+    isFindingBikePage() {
+      return this.$route.name === 'FindingBike';
     },
   },
   methods: {
