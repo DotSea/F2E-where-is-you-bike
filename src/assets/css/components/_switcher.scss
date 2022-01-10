@@ -1,10 +1,11 @@
 .switcher-in-desktop {
   display: none;
   @include media-breakpoint-up(lg) {
+    position: absolute;
+    left: 50%;
+    transform: translateX(calc(100% - 245px - 89px));
     display: flex;
-    margin: 0 auto;
-
-    height: 50%;
+    height: 42px;
   }
 }
 .switcher-in-mobile-and-tablet {
