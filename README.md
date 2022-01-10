@@ -26,7 +26,7 @@
 
 1. 透過定位功能，顯示使用者附近自行車站點位置。
 2. 點擊站點可顯示詳細資訊，包含站點名稱、可租車數、可還空位等。
-   <img src='https://github.com/DotSea/F2E-where-is-you-bike/blob/main/public/readme-image/readme-1.png' width="300" height="100">
+   ![image](https://github.com/DotSea/F2E-where-is-you-bike/blob/main/public/readme-image/readme-1.png)
 
 3. 可搜尋特定站點名稱，並顯示該站點具體位置。
    ![image](https://github.com/DotSea/F2E-where-is-you-bike/blob/main/public/readme-image/readme-2.png)
