@@ -6,14 +6,6 @@
 
 <script>
 import L from 'leaflet';
-// // eslint-disable-next-line
-// delete L.Icon.Default.prototype._getIconUrl;
-// // eslint-disable-next-line
-// L.Icon.Default.mergeOptions({
-//   iconRetinaUrl: '../../node_modules/leaflet/dist/images/marker-icon-2x.png',
-//   iconUrl: '../../node_modulesleaflet/dist/images/marker-icon.png',
-//   shadowUrl: '../../node_modulesleaflet/dist/images/marker-shadow.png',
-// });
 
 export default {
   data() {
