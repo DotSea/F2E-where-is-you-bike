@@ -7,7 +7,7 @@
 ## Demo
 
 <p>
-  Demo：<a  href="https://dyfu95.github.io/F2E-where-is-you-bike/#/bike">where is youbike</a>
+  Demo：<a  href="https://dyfu95.github.io/F2E-where-is-you-bike/#/">where is youbike</a>
 </p>
 
 ## 使用技術
